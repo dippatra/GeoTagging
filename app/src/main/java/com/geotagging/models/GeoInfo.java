@@ -14,6 +14,8 @@ public class GeoInfo {
     private double lon;
     @ColumnInfo(name = "image_url")
     private String imageUrl;
+    @ColumnInfo(name = "address")
+    private String address;
 
     public double getLat() {
         return lat;
@@ -45,5 +47,13 @@ public class GeoInfo {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

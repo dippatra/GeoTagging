@@ -4,4 +4,5 @@
     <string name="image_pick_text">Capture image</string>
     <string name="tag_list_header">TaggingList</string>
     <string name="empty_tag">No tag added to the database.</string>
+    <string name="unknown_location_label">Unknown place</string>
 </resources>

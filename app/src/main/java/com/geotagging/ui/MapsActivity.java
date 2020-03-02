@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +30,8 @@ import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.vansuita.pickimage.enums.EPickType;
 import com.vansuita.pickimage.listeners.IPickResult;
+
+import java.util.List;
 
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 
@@ -166,10 +170,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try{
+                        String address=getLocationFromLatLng(latLng);
                         GeoInfo geoInfo= new GeoInfo();
                         geoInfo.setImageUrl(imagePath);
                         geoInfo.setLat(latLng.latitude);
                         geoInfo.setLon(latLng.longitude);
+                        geoInfo.setAddress(address);
                         DatabaseClient.getInstance(getApplicationContext()).getAppDatabase()
                                 .geoTaggingDao()
                                 .insert(geoInfo);
@@ -245,6 +251,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }catch (Exception ex){
             Log.e(TAG,ex.getMessage());
         }
+    }
+    private String getLocationFromLatLng(LatLng latLng){
+        String address="";
+        List<Address> addresses;
+        Geocoder geocoder;
+        try{
+            address=getString(R.string.unknown_location_label);
+            geocoder = new Geocoder(getApplicationContext());
+            addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            if (addresses.size() > 0) {
+                Address fetchedAddress = addresses.get(0);
+                StringBuilder strAddress = new StringBuilder();
+                strAddress.append(fetchedAddress.getAddressLine(fetchedAddress.getMaxAddressLineIndex()));
+                address = strAddress.toString();
+            }
+
+        }catch (Exception ex){
+            Log.e(TAG,ex.getMessage());
+        }
+        return address;
     }
 
 }

@@ -44,10 +44,13 @@ public class TagListAdapter extends RecyclerView.Adapter<TagListAdapter.MyViewHo
         try{
             GeoInfo geoInfo;
             geoInfo=geoInfos.get(position);
-            holder.lat.setText(String.valueOf(geoInfo.getLat()));
+            holder.lat.setText("Lat "+String.valueOf(geoInfo.getLat()));
             CommonMethods.setFontRegular(holder.lat);
-            holder.lon.setText(String.valueOf(geoInfo.getLon()));
+            holder.lon.setText("Lon "+String.valueOf(geoInfo.getLon()));
             CommonMethods.setFontRegular(holder.lon);
+            holder.address.setText(geoInfo.getAddress());
+            holder.address.setSelected(true);
+            CommonMethods.setFontBold(holder.address);
             Glide.with(context)
                     .load(geoInfo.getImageUrl())
                     .apply(new RequestOptions()
@@ -91,7 +94,7 @@ public class TagListAdapter extends RecyclerView.Adapter<TagListAdapter.MyViewHo
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView tagImage;
-        TextView lat, lon;
+        TextView lat, lon,address;
         RelativeLayout container;
 
         public MyViewHolder(View view) {
@@ -101,6 +104,7 @@ public class TagListAdapter extends RecyclerView.Adapter<TagListAdapter.MyViewHo
                 lat=(TextView)view.findViewById(R.id.lat_text);
                 lon=(TextView)view.findViewById(R.id.lon_text);
                 container=(RelativeLayout)view.findViewById(R.id.container);
+                address=(TextView)view.findViewById(R.id.address);
 
             }catch (Exception ex){
                 Log.e(TAG,ex.getMessage());
