@@ -1,8 +1,10 @@
 package com.geotagging.ui;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -49,6 +51,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
+            if(!CommonMethods.isNetworkAvailable(this)){
+                showAlertDialog();
+            }
             setContentView(R.layout.activity_maps);
             initializeActivity();
             // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -311,6 +316,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onBackPressed() {
         super.onBackPressed();
         finishAffinity();
+    }
+    private void showAlertDialog(){
+        AlertDialog.Builder builder;
+        try{
+            builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.dialog_message)
+                    .setTitle(R.string.dialog_warning)
+                    .setCancelable(false)
+                    .setPositiveButton(getString(R.string.ok_text), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            AlertDialog alert = builder.create();
+            alert.show();
+
+        }catch (Exception ex){
+            Log.e(TAG,ex.getMessage());
+        }
     }
 
 }
