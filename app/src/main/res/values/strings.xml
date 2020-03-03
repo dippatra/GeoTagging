@@ -5,4 +5,8 @@
     <string name="tag_list_header">TaggingList</string>
     <string name="empty_tag">No tag added to the database.</string>
     <string name="unknown_location_label">Unknown place</string>
+    <string name="Tag_list">Open Tag</string>
+    <string name="map_screen_header">Map Screen</string>
+    <string name="tag_save_text">Tag data saved.</string>
+
 </resources>

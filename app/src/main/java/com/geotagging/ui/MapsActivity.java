@@ -11,11 +11,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.geotagging.R;
 import com.geotagging.models.GeoDatabase;
 import com.geotagging.models.GeoInfo;
+import com.geotagging.utils.CommonMethods;
 import com.geotagging.utils.DatabaseClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -46,11 +48,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        try{
+            setContentView(R.layout.activity_maps);
+            initializeActivity();
+            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
+        }catch (Exception ex){
+            Log.e(TAG,ex.getMessage());
+        }
+
+    }
+    private void initializeActivity(){
+        TextView header,openTag;
+        try {
+            header=(TextView)findViewById(R.id.header);
+            CommonMethods.setFontBold(header);
+            openTag=(TextView)findViewById(R.id.open_tag_list);
+            CommonMethods.setFontRegular(openTag);
+            openTag.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openGeoTagList(0);
+                }
+            });
+        }catch (Exception ex){
+            Log.e(TAG,ex.getMessage());
+        }
     }
 
 
@@ -91,7 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
 
                 }
-            },750);
+            },1000);
 
         }catch (Exception ex){
             Log.e(TAG,ex.getMessage());
@@ -191,8 +216,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     super.onPostExecute(aVoid);
                     try{
                         hideProgressbar();
-                        Toast.makeText(MapsActivity.this, "data saved", Toast.LENGTH_SHORT).show();
-                        openGeoTagList(0);
+                        Toast.makeText(MapsActivity.this, getString(R.string.tag_save_text), Toast.LENGTH_SHORT).show();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                openGeoTagList(0);
+                            }
+                        },200);
+
 
                     }catch (Exception ex){
                         Log.e(TAG,ex.getMessage());
@@ -231,6 +262,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     private void openGeoTagList(int selectedMarkerID){
         try{
+            if(marker!=null){
+                marker.remove();
+                marker=null;
+            }
             Intent intent = new Intent(this, GeoTaggingListActivity.class);
             intent.putExtra("markerID",selectedMarkerID);
             overridePendingTransition(R.anim.open_next, R.anim.close_main);
@@ -271,6 +306,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.e(TAG,ex.getMessage());
         }
         return address;
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishAffinity();
     }
 
 }
